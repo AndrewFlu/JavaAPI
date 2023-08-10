@@ -15,4 +15,11 @@ public class HelloAPITest {
         Response response = RestAssured.get(url).andReturn();
         response.prettyPrint();
     }
+
+    @Test
+    void getText(){
+        String url = "https://playground.learnqa.ru/api/get_text";
+        Response response = RestAssured.get(url).andReturn();
+        response.print();
+    }
 }
