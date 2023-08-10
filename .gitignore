@@ -1,0 +1,28 @@
+# игнорируем весь каталог со всем его содержимым
+.idea/
+target/
+allure-results/
+
+# скомпилированные файлы
+*.class
+
+# логи
+*.log
+
+# файлы BlueJ
+*.ctxt
+
+# Mobile tools for Java (J2ME)
+.mtj.tmp/
+
+# пакетные файлы
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gx
+*.rar
+
+# логи крашей виртуальных машин (http://www.java.com/en/download/help/error_hotspot.xml)
+hs_err_pid*
