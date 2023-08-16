@@ -10,7 +10,7 @@ public class HelloAPITest {
     }
 
     @Test
-    void getHelloResponse() {
+    void testRestAssured() {
         String url = "https://playground.learnqa.ru/api/hello";
         Response response = RestAssured.get(url).andReturn();
         response.prettyPrint();
