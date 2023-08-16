@@ -1,4 +1,5 @@
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 import org.junit.jupiter.api.Test;
@@ -41,9 +42,24 @@ public class HelloAPITest {
                 .get(methodURL)
                 .andReturn();
         response.prettyPrint();
-
     }
 
+    @Test
+    void testJsonPath() {
+        String methodURL = "https://playground.learnqa.ru/api/hello";
+        JsonPath response = RestAssured
+                .given()
+                .queryParam("name", "John Snow")
+                .get(methodURL)
+                .jsonPath();
+        String key = "answer";
+        String value = response.get(key);
+        if (value == null) {
+            System.out.printf("The key %s is absent.", key);
+        } else {
+            System.out.println(value);
+        }
+    }
     @Test
     void getText(){
         String url = "https://playground.learnqa.ru/api/get_text";
