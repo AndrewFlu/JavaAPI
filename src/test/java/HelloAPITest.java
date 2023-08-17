@@ -8,6 +8,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HelloAPITest {
+
+    public static final String ENDPOINT_303 = "https://playground.learnqa.ru/api/get_303";
+    public static final String ENDPOINT_505 = "https://playground.learnqa.ru/api/get_500";
+    public static final String ENDPOINT_HELLO = "https://playground.learnqa.ru/api/hello";
+    public static final String ENDPOINT_TEXT = "https://playground.learnqa.ru/api/get_text";
+    public static final String ENDPOINT_CHECK_TYPE = "https://playground.learnqa.ru/api/check_type";
+
     @Test
     void printHello(){
         System.out.println("Hello from Andrew");
@@ -15,42 +22,38 @@ public class HelloAPITest {
 
     @Test
     void testRestAssured() {
-        String url = "https://playground.learnqa.ru/api/hello";
-        Response response = RestAssured.get(url).andReturn();
+        Response response = RestAssured.get(ENDPOINT_HELLO).andReturn();
         response.prettyPrint();
     }
 
     @Test
     void testParameter() {
-       String methodURL = "https://playground.learnqa.ru/api/hello";
         Response response = RestAssured
                 .given()
                 .queryParam("name", "John Snow")
-                .get(methodURL).andReturn();
+                .get(ENDPOINT_HELLO).andReturn();
         response.prettyPrint();
     }
 
     @Test
     void testParameters() {
-        String methodURL = "https://playground.learnqa.ru/api/hello";
         Map<String, String> params = new HashMap<>();
         params.put("name", "Sansa Stark");
 
         Response response = RestAssured
                 .given()
                 .queryParams(params)
-                .get(methodURL)
+                .get(ENDPOINT_HELLO)
                 .andReturn();
         response.prettyPrint();
     }
 
     @Test
     void testJsonPath() {
-        String methodURL = "https://playground.learnqa.ru/api/hello";
         JsonPath response = RestAssured
                 .given()
                 .queryParam("name", "John Snow")
-                .get(methodURL)
+                .get(ENDPOINT_HELLO)
                 .jsonPath();
         String key = "answer";
         String value = response.get(key);
@@ -62,26 +65,23 @@ public class HelloAPITest {
     }
     @Test
     void getText(){
-        String url = "https://playground.learnqa.ru/api/get_text";
-        Response response = RestAssured.get(url).andReturn();
+        Response response = RestAssured.get(ENDPOINT_TEXT).andReturn();
         response.print();
     }
 
     @Test
     void testGetRequestType() {
-        String endpointURL = "https://playground.learnqa.ru/api/check_type";
         Response response = RestAssured
                 .given()
                 .queryParam("param1", "value1")
                 .queryParam("param2", "value2")
-                .get(endpointURL)
+                .get(ENDPOINT_CHECK_TYPE)
                 .andReturn();
         response.print();
     }
 
     @Test
     void testPostRequestType() {
-        String endpointURL = "https://playground.learnqa.ru/api/check_type";
         Map<String, Object> body = new HashMap<>();
         body.put("param1", "value1");
         body.put("param2", "value2");
@@ -90,8 +90,30 @@ public class HelloAPITest {
 //                .body("param1=value1&param2=value2") // via String
 //                .body("{\"param1\":\"value1\",\"param2\":\"value2\"}") // via JSON
                 .body(body) // via Map
-                .post(endpointURL)
+                .post(ENDPOINT_CHECK_TYPE)
                 .andReturn();
         response.print();
+    }
+
+    @Test
+    void getResponseCode() {
+        Response response = RestAssured
+                .get(ENDPOINT_505)
+                .andReturn();
+        int statusCode = response.getStatusCode();
+        System.out.println(statusCode);
+    }
+
+    @Test
+    void redirect () {
+        Response response = RestAssured
+                .given()
+                .redirects()
+                .follow(true)
+                .when()
+                .get(ENDPOINT_303)
+                .andReturn();
+        int statusCode = response.statusCode();
+        System.out.println(statusCode);
     }
 }
