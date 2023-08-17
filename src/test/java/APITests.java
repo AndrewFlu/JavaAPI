@@ -4,8 +4,7 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class APITests {
 
@@ -17,6 +16,7 @@ public class APITests {
     private static final String ENDPOINT_ALL_HEADERS = "https://playground.learnqa.ru/api/show_all_headers";
     private static final String ENDPOINT_GET_AUTH_COOKIE = "https://playground.learnqa.ru/api/get_auth_cookie";
     private static final String ENDPOINT_CHECK_AUTH_COOKIE = "https://playground.learnqa.ru/api/check_auth_cookie";
+    private static final String ENDPOINT_GET_JSON_HOMEWORK = "https://playground.learnqa.ru/api/get_json_homework";
 
     @Test
     void testRestAssured() {
@@ -184,5 +184,21 @@ public class APITests {
                 .post(ENDPOINT_CHECK_AUTH_COOKIE)
                 .andReturn();
         checkCookieResponse.print();
+    }
+
+    @Test
+    void getJsonHomeWork() {
+        JsonPath response = RestAssured
+                .get(ENDPOINT_GET_JSON_HOMEWORK)
+                .jsonPath();
+        List<LinkedHashMap<String, String>> responseList = response.getList("messages");
+
+        System.out.println("Содержимое второго сообщения ответа: ");
+        LinkedHashMap<String, String> secondMessage = responseList.get(1);
+        Set<String> keys = secondMessage.keySet();
+        for (String key : keys) {
+            String value = secondMessage.get(key);
+            System.out.println(key + " : " + value);
+        }
     }
 }
