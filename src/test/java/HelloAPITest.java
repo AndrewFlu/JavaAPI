@@ -66,4 +66,32 @@ public class HelloAPITest {
         Response response = RestAssured.get(url).andReturn();
         response.print();
     }
+
+    @Test
+    void testGetRequestType() {
+        String endpointURL = "https://playground.learnqa.ru/api/check_type";
+        Response response = RestAssured
+                .given()
+                .queryParam("param1", "value1")
+                .queryParam("param2", "value2")
+                .get(endpointURL)
+                .andReturn();
+        response.print();
+    }
+
+    @Test
+    void testPostRequestType() {
+        String endpointURL = "https://playground.learnqa.ru/api/check_type";
+        Map<String, Object> body = new HashMap<>();
+        body.put("param1", "value1");
+        body.put("param2", "value2");
+        Response response = RestAssured
+                .given()
+//                .body("param1=value1&param2=value2") // via String
+//                .body("{\"param1\":\"value1\",\"param2\":\"value2\"}") // via JSON
+                .body(body) // via Map
+                .post(endpointURL)
+                .andReturn();
+        response.print();
+    }
 }
