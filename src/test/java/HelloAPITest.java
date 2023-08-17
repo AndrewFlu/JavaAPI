@@ -1,7 +1,7 @@
 import io.restassured.RestAssured;
+import io.restassured.http.Headers;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -14,9 +14,10 @@ public class HelloAPITest {
     public static final String ENDPOINT_HELLO = "https://playground.learnqa.ru/api/hello";
     public static final String ENDPOINT_TEXT = "https://playground.learnqa.ru/api/get_text";
     public static final String ENDPOINT_CHECK_TYPE = "https://playground.learnqa.ru/api/check_type";
+    private static final String ENDPOINT_ALL_HEADERS = "https://playground.learnqa.ru/api/show_all_headers";
 
     @Test
-    void printHello(){
+    void printHello() {
         System.out.println("Hello from Andrew");
     }
 
@@ -63,8 +64,9 @@ public class HelloAPITest {
             System.out.println(value);
         }
     }
+
     @Test
-    void getText(){
+    void getText() {
         Response response = RestAssured.get(ENDPOINT_TEXT).andReturn();
         response.print();
     }
@@ -105,15 +107,35 @@ public class HelloAPITest {
     }
 
     @Test
-    void redirect () {
+    void redirect() {
         Response response = RestAssured
                 .given()
                 .redirects()
-                .follow(true)
+                .follow(false)
                 .when()
                 .get(ENDPOINT_303)
                 .andReturn();
         int statusCode = response.statusCode();
+        String locationHeader = response.getHeader("Location");
         System.out.println(statusCode);
+        System.out.println("Location = " + locationHeader);
     }
+
+    @Test
+    void allHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("myHeader1", "myValue1");
+        headers.put("myHeader2", "myValue2");
+        Response response = RestAssured
+                .given()
+                .headers(headers)
+                .when()
+                .get(ENDPOINT_ALL_HEADERS)
+                .andReturn();
+        response.prettyPrint();
+
+        Headers responseHeaders = response.getHeaders();
+        System.out.println("Response headers: \n" + responseHeaders);
+    }
+
 }
