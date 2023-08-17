@@ -15,6 +15,7 @@ public class HelloAPITest {
     public static final String ENDPOINT_TEXT = "https://playground.learnqa.ru/api/get_text";
     public static final String ENDPOINT_CHECK_TYPE = "https://playground.learnqa.ru/api/check_type";
     private static final String ENDPOINT_ALL_HEADERS = "https://playground.learnqa.ru/api/show_all_headers";
+    private static final String ENDPOINT_AUTH_COOKIE = "https://playground.learnqa.ru/api/get_auth_cookie";
 
     @Test
     void printHello() {
@@ -138,4 +139,27 @@ public class HelloAPITest {
         System.out.println("Response headers: \n" + responseHeaders);
     }
 
+    @Test
+    void getCookies() {
+        Map<String, String> data = new HashMap<>();
+        data.put("login", "secret_login");
+        data.put("password", "secret_pass");
+        Response response = RestAssured
+                .given()
+                .body(data)
+                .when()
+                .post(ENDPOINT_AUTH_COOKIE)
+                .andReturn();
+
+        System.out.println("Response:");
+        response.prettyPrint();
+
+        System.out.println();
+        System.out.println("All headers:");
+        System.out.println(response.getHeaders());
+
+        System.out.println();
+        System.out.println("Cookies:");
+        System.out.println(response.getCookies());
+    }
 }
