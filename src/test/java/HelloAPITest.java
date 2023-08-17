@@ -15,7 +15,8 @@ public class HelloAPITest {
     public static final String ENDPOINT_TEXT = "https://playground.learnqa.ru/api/get_text";
     public static final String ENDPOINT_CHECK_TYPE = "https://playground.learnqa.ru/api/check_type";
     private static final String ENDPOINT_ALL_HEADERS = "https://playground.learnqa.ru/api/show_all_headers";
-    private static final String ENDPOINT_AUTH_COOKIE = "https://playground.learnqa.ru/api/get_auth_cookie";
+    private static final String ENDPOINT_GET_AUTH_COOKIE = "https://playground.learnqa.ru/api/get_auth_cookie";
+    private static final String ENDPOINT_CHECK_AUTH_COOKIE = "https://playground.learnqa.ru/api/check_auth_cookie";
 
     @Test
     void printHello() {
@@ -148,7 +149,7 @@ public class HelloAPITest {
                 .given()
                 .body(data)
                 .when()
-                .post(ENDPOINT_AUTH_COOKIE)
+                .post(ENDPOINT_GET_AUTH_COOKIE)
                 .andReturn();
 
         System.out.println("Response:");
@@ -161,5 +162,32 @@ public class HelloAPITest {
         System.out.println();
         System.out.println("Cookies:");
         System.out.println(response.getCookies());
+    }
+
+    @Test
+    void useAuthCookie() {
+        Map<String, String> authData = new HashMap<>();
+        authData.put("login", "secret_login");
+        authData.put("password", "secret_pass");
+        Response getCookieResponse = RestAssured
+                .given()
+                .body(authData)
+                .when()
+                .post(ENDPOINT_GET_AUTH_COOKIE)
+                .andReturn();
+        String authCookie = getCookieResponse.getCookie("auth_cookie");
+
+        Map<String, String> cookies = new HashMap<>();
+        if (authCookie != null) {
+            cookies.put("auth_cookie", authCookie);
+        }
+        Response checkCookieResponse = RestAssured
+                .given()
+                .body(authData)
+                .cookies(cookies)
+                .when()
+                .post(ENDPOINT_CHECK_AUTH_COOKIE)
+                .andReturn();
+        checkCookieResponse.print();
     }
 }
