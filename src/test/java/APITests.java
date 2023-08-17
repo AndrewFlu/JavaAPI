@@ -17,6 +17,7 @@ public class APITests {
     private static final String ENDPOINT_GET_AUTH_COOKIE = "https://playground.learnqa.ru/api/get_auth_cookie";
     private static final String ENDPOINT_CHECK_AUTH_COOKIE = "https://playground.learnqa.ru/api/check_auth_cookie";
     private static final String ENDPOINT_GET_JSON_HOMEWORK = "https://playground.learnqa.ru/api/get_json_homework";
+    private static final String ENDPOINT_LONG_REDIRECT = "https://playground.learnqa.ru/api/long_redirect";
 
     @Test
     void testRestAssured() {
@@ -200,5 +201,18 @@ public class APITests {
             String value = secondMessage.get(key);
             System.out.println(key + " : " + value);
         }
+    }
+
+    @Test
+    void testLongRedirect() {
+        Response response = RestAssured
+                .given()
+                .redirects()
+                .follow(false)
+                .when()
+                .get(ENDPOINT_LONG_REDIRECT)
+                .andReturn();
+        String location = response.getHeader("Location");
+        System.out.printf("Адрес для перенаправления: %s", location);
     }
 }
