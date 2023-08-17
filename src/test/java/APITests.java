@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HelloAPITest {
+public class APITests {
 
     public static final String ENDPOINT_303 = "https://playground.learnqa.ru/api/get_303";
     public static final String ENDPOINT_505 = "https://playground.learnqa.ru/api/get_500";
@@ -17,11 +17,6 @@ public class HelloAPITest {
     private static final String ENDPOINT_ALL_HEADERS = "https://playground.learnqa.ru/api/show_all_headers";
     private static final String ENDPOINT_GET_AUTH_COOKIE = "https://playground.learnqa.ru/api/get_auth_cookie";
     private static final String ENDPOINT_CHECK_AUTH_COOKIE = "https://playground.learnqa.ru/api/check_auth_cookie";
-
-    @Test
-    void printHello() {
-        System.out.println("Hello from Andrew");
-    }
 
     @Test
     void testRestAssured() {
