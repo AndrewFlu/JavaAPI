@@ -215,4 +215,35 @@ public class APITests {
         String location = response.getHeader("Location");
         System.out.printf("Адрес для перенаправления: %s", location);
     }
+
+    @Test
+    void redirectDepth() {
+        int responseCode;
+        String url = ENDPOINT_LONG_REDIRECT;
+        List<String> locations = new ArrayList<>();
+        do {
+            Response response = RestAssured
+                    .given()
+                    .redirects()
+                    .follow(false)
+                    .when()
+                    .get(url)
+                    .andReturn();
+
+            responseCode = response.getStatusCode();
+            String location = response.getHeader("Location");
+
+            if (responseCode == 301) {
+                if (location != null) {
+                    locations.add(location);
+                    url = location;
+                }
+            }
+        }
+        while (responseCode != 200);
+
+        System.out.printf("Количество перенаправлений: %d \n", locations.size());
+        System.out.println("Список адресов, куда выполнялись перенаправления:");
+        locations.forEach(System.out::println);
+    }
 }
