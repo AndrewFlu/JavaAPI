@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FileReaderTest {
     @Test
     void canParseFileWith20Passwords() {
-        String filePath = "src/test/resources/commonpasswords.csv";
+        String filePath = "src/test/resources/commonpasswords_2021.csv";
         List<String> passwords = FileReader.getPasswords(filePath);
 
         assertNotNull(passwords);
@@ -20,7 +20,7 @@ public class FileReaderTest {
 
     @Test
     void canParseFileWith225() {
-        String file = "src/test/resources/passwords.csv";
+        String file = "src/test/resources/passwords_2011-2019.csv";
         List<String> passwords = FileReader.getPasswords(file);
 
         assertNotNull(passwords);
@@ -31,7 +31,7 @@ public class FileReaderTest {
 
     @Test
     void testUniquePasswords () {
-        String file = "src/test/resources/passwords.csv";
+        String file = "src/test/resources/passwords_2011-2019.csv";
         List<String> passwords = FileReader.getPasswords(file);
         Set<String> uniquePasswords = FileReader.uniquePasswords(passwords);
         assertFalse(uniquePasswords.isEmpty());
