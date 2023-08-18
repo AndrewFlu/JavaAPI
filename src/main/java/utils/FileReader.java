@@ -2,8 +2,7 @@ package utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class FileReader {
     public static List<String> getPasswords(String path) {
@@ -13,7 +12,7 @@ public class FileReader {
             String line = reader.readLine();
             do {
                 String[] split = line.split("\t");
-                passwords.add(split[1]);
+                passwords.addAll(Arrays.asList(split).subList(1, split.length));
                 line = reader.readLine();
             }  while (line != null);
 
@@ -22,5 +21,9 @@ public class FileReader {
             throw new RuntimeException(e);
         }
         return passwords;
+    }
+
+    public static Set<String> uniquePasswords(List<String> passwords) {
+        return new HashSet<>(passwords);
     }
 }
