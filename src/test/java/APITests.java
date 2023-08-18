@@ -3,6 +3,7 @@ import io.restassured.http.Headers;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import utils.FileReader;
 
 import java.util.*;
 
@@ -18,9 +19,11 @@ public class APITests {
     private static final String ENDPOINT_ALL_HEADERS = "https://playground.learnqa.ru/api/show_all_headers";
     private static final String ENDPOINT_GET_AUTH_COOKIE = "https://playground.learnqa.ru/api/get_auth_cookie";
     private static final String ENDPOINT_CHECK_AUTH_COOKIE = "https://playground.learnqa.ru/api/check_auth_cookie";
+    private static final String ENDPOINT_CHECK_AJAX_AUTH_COOKIE = "https://playground.learnqa.ru/ajax/api/check_auth_cookie";
     private static final String ENDPOINT_GET_JSON_HOMEWORK = "https://playground.learnqa.ru/api/get_json_homework";
     private static final String ENDPOINT_LONG_REDIRECT = "https://playground.learnqa.ru/api/long_redirect";
     private static final String ENDPOINT_LONGTIME_JOB = "https://playground.learnqa.ru/api/longtime_job";
+    private static final String ENDPOINT_GET_SECRET_PASSWORD = "https://playground.learnqa.ru/ajax/api/get_secret_password_homework";
 
     @Test
     void testRestAssured() {
@@ -302,4 +305,54 @@ public class APITests {
         }
     }
 
+    @Test
+    void bruteForcePasswords() {
+        String login = "super_admin";
+        String password = null;
+        String authCookieName = "auth_cookie";
+
+        String passwordsPath = "src/test/resources/passwords_2011-2019.csv";
+        List<String> passwordList = FileReader.getPasswords(passwordsPath);
+        Set<String> uniquePasswords = FileReader.uniquePasswords(passwordList);
+
+        // 1. get_secret_password_homework
+        for (String uniquePassword : uniquePasswords) {
+            Map<String, String> authData = new HashMap<>();
+            authData.put("login", login);
+            authData.put("password", uniquePassword);
+            Response cookieResponse = RestAssured
+                    .given()
+                    .body(authData)
+                    .when()
+                    .post(ENDPOINT_GET_SECRET_PASSWORD)
+                    .andReturn();
+
+            String authCookieValue = cookieResponse.getCookie("auth_cookie");
+
+            if (authCookieValue != null && !authCookieValue.isEmpty()) {
+                // 2. check_auth_cookie
+                Response checkCookieResponse = RestAssured
+                        .given()
+                        .header("Cookie", authCookieName + "=" + authCookieValue)
+                        .body(authData)
+                        .when()
+                        .post(ENDPOINT_CHECK_AJAX_AUTH_COOKIE)
+                        .andReturn();
+                String result = checkCookieResponse.body().asString();
+
+                if (result.equals("You are authorized")) {
+                    password = uniquePassword;
+                    break;
+                }
+            } else {
+                fail("Не удалось получить auth_cookie!");
+            }
+        }
+        if (password == null || password.isEmpty()) {
+            fail("Не удалось подобрать пароль");
+        } else {
+            System.out.println("Учётные данные найдены!");
+            System.out.printf("Логин: %s\nПароль: %s", login, password);
+        }
+    }
 }
