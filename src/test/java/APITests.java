@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class APITests {
 
     public static final String ENDPOINT_303 = "https://playground.learnqa.ru/api/get_303";
@@ -18,6 +20,7 @@ public class APITests {
     private static final String ENDPOINT_CHECK_AUTH_COOKIE = "https://playground.learnqa.ru/api/check_auth_cookie";
     private static final String ENDPOINT_GET_JSON_HOMEWORK = "https://playground.learnqa.ru/api/get_json_homework";
     private static final String ENDPOINT_LONG_REDIRECT = "https://playground.learnqa.ru/api/long_redirect";
+    private static final String ENDPOINT_LONGTIME_JOB = "https://playground.learnqa.ru/api/longtime_job";
 
     @Test
     void testRestAssured() {
@@ -246,4 +249,57 @@ public class APITests {
         System.out.println("Список адресов, куда выполнялись перенаправления:");
         locations.forEach(System.out::println);
     }
+
+    @Test
+    void token() {
+        String result;
+        String status;
+
+        JsonPath response_step1 = RestAssured
+                .get(ENDPOINT_LONGTIME_JOB)
+                .jsonPath();
+        LinkedHashMap<String, Object> tokenResponse = response_step1.get();
+        String token = (String) tokenResponse.get("token");
+        int seconds = (int) tokenResponse.get("seconds");
+
+        if (token != null && !token.isEmpty()) {
+            JsonPath response_step2 = RestAssured
+                    .given()
+                    .param("token", token)
+                    .when()
+                    .get(ENDPOINT_LONGTIME_JOB)
+                    .jsonPath();
+            LinkedHashMap<String, String> statusResponse = response_step2.get();
+            result = statusResponse.get("result");
+            status = statusResponse.get("status");
+            System.out.printf("result: %s\n", result);
+            System.out.printf("status: %s\n", status);
+
+            assertNull(result);
+            assertEquals("Job is NOT ready", status);
+
+            long delay = seconds * 1000L;
+            System.out.printf("Запуск ожидания в %s мс...\n", delay);
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            JsonPath response_step2_1 = RestAssured
+                    .given()
+                    .param("token", token)
+                    .when()
+                    .get(ENDPOINT_LONGTIME_JOB)
+                    .jsonPath();
+            LinkedHashMap<String, String> statusResponse_2_1 = response_step2_1.get();
+            result = statusResponse_2_1.get("result");
+            status = statusResponse_2_1.get("status");
+            System.out.printf("result: %s\n", result);
+            System.out.printf("status: %s\n", status);
+
+            assertNotNull(result);
+            assertEquals("Job is ready", status);
+        }
+    }
+
 }
