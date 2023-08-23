@@ -1,9 +1,9 @@
 package tests;
 
 import io.restassured.RestAssured;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import lib.Assertions;
 import lib.BaseTestCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,9 +12,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AuthTests extends BaseTestCase {
     private static final String ENDPOINT_LOGIN = "https://playground.learnqa.ru/api/user/login";
@@ -56,10 +53,7 @@ public class AuthTests extends BaseTestCase {
                 .get(ENDPOINT_AUTH)
                 .andReturn();
 
-        int authUserId = authEndpointResponse.jsonPath().getInt("user_id");
-
-        assertTrue(authUserId > 0, "'user_id' in 'auth endpoint'  should be greater then 0");
-        assertEquals(loginUserId, authUserId, "Cannot authorised in auth endpoint");
+        Assertions.assertJsonByName(authEndpointResponse, "user_id", this.loginUserId);
     }
 
     @ParameterizedTest
@@ -74,9 +68,8 @@ public class AuthTests extends BaseTestCase {
         } else {
             throw new IllegalArgumentException("Unrecognized test parameter: " + condition);
         }
-        JsonPath authResponse = spec.get().jsonPath();
-        int userId = authResponse.get("user_id");
+        Response authResponse = spec.get().andReturn();
 
-        assertEquals(0, userId, "'user_id' should be 0 for unauthorised request to auth endpoint");
+        Assertions.assertJsonByName(authResponse, "user_id", 0);
     }
 }
