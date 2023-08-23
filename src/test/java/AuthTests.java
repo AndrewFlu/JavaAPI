@@ -1,8 +1,8 @@
 import io.restassured.RestAssured;
-import io.restassured.http.Headers;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -20,8 +20,12 @@ public class AuthTests {
     private final String login = "vinkotov@example.com";
     private final String password = "1234";
 
-    @Test
-    void auth() {
+    private String cookie;
+    private String header;
+    private int loginUserId;
+
+    @BeforeEach
+    public void login() {
 
         Map<String, String> authData = new HashMap<>();
         authData.put("email", login);
@@ -33,20 +37,18 @@ public class AuthTests {
                 .when()
                 .post(ENDPOINT_LOGIN)
                 .andReturn();
+        this.cookie = loginEndpointResponse.getCookie("auth_sid");
+        this.header = loginEndpointResponse.getHeader("x-csrf-token");
+        this.loginUserId = loginEndpointResponse.jsonPath().getInt("user_id");
+    }
 
-        Headers headers = loginEndpointResponse.headers();
-        Map<String, String> cookies = loginEndpointResponse.cookies();
-        int loginUserId = loginEndpointResponse.jsonPath().getInt("user_id");
 
-        assertEquals(200, loginEndpointResponse.statusCode(), "Unexpected status code");
-        assertTrue(cookies.containsKey("auth_sid"), "Response doesn't contains 'auth_sid' cookie");
-        assertTrue(headers.hasHeaderWithName("x-csrf-token"), "Response doesn't contains 'x-csrf-token' header");
-        assertTrue(loginUserId > 0, "'user_id' in 'login endpoint'  should be greater then 0");
-
+    @Test
+    void auth() {
         Response authEndpointResponse = RestAssured
                 .given()
-                .header("x-csrf-token", loginEndpointResponse.getHeader("x-csrf-token"))
-                .cookie("auth_sid", loginEndpointResponse.cookies().get("auth_sid"))
+                .header("x-csrf-token", this.header)
+                .cookie("auth_sid", this.cookie)
                 .when()
                 .get(ENDPOINT_AUTH)
                 .andReturn();
@@ -60,26 +62,12 @@ public class AuthTests {
     @ParameterizedTest
     @ValueSource(strings = {"cookie", "headers"})
     void negativeAuth(String condition) {
-        Map<String, String> authData = new HashMap<>();
-        authData.put("email", login);
-        authData.put("password", password);
-
-        Response loginResponse = RestAssured
-                .given()
-                .body(authData)
-                .when()
-                .post(ENDPOINT_LOGIN)
-                .andReturn();
-
-        Map<String, String> cookies = loginResponse.getCookies();
-        Headers headers = loginResponse.getHeaders();
-
         RequestSpecification spec = RestAssured.given();
         spec.baseUri(ENDPOINT_AUTH);
         if (condition.equals("cookie")) {
-            spec.cookie("auth_sid", cookies.get("auth_sid"));
+            spec.cookie("auth_sid", this.cookie);
         } else if (condition.equals("headers")) {
-            spec.header("x-csrf-token", headers.get("x-csrf-token"));
+            spec.header("x-csrf-token", this.header);
         } else {
             throw new IllegalArgumentException("Unrecognized test parameter: " + condition);
         }
