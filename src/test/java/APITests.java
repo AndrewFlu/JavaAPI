@@ -13,7 +13,6 @@ public class APITests {
 
     public static final String ENDPOINT_303 = "https://playground.learnqa.ru/api/get_303";
     public static final String ENDPOINT_505 = "https://playground.learnqa.ru/api/get_500";
-    public static final String ENDPOINT_HELLO = "https://playground.learnqa.ru/api/hello";
     public static final String ENDPOINT_TEXT = "https://playground.learnqa.ru/api/get_text";
     public static final String ENDPOINT_CHECK_TYPE = "https://playground.learnqa.ru/api/check_type";
     private static final String ENDPOINT_ALL_HEADERS = "https://playground.learnqa.ru/api/show_all_headers";
@@ -24,50 +23,6 @@ public class APITests {
     private static final String ENDPOINT_LONG_REDIRECT = "https://playground.learnqa.ru/api/long_redirect";
     private static final String ENDPOINT_LONGTIME_JOB = "https://playground.learnqa.ru/api/longtime_job";
     private static final String ENDPOINT_GET_SECRET_PASSWORD = "https://playground.learnqa.ru/ajax/api/get_secret_password_homework";
-
-    @Test
-    void testRestAssured() {
-        Response response = RestAssured.get(ENDPOINT_HELLO).andReturn();
-        response.prettyPrint();
-    }
-
-    @Test
-    void testParameter() {
-        Response response = RestAssured
-                .given()
-                .queryParam("name", "John Snow")
-                .get(ENDPOINT_HELLO).andReturn();
-        response.prettyPrint();
-    }
-
-    @Test
-    void testParameters() {
-        Map<String, String> params = new HashMap<>();
-        params.put("name", "Sansa Stark");
-
-        Response response = RestAssured
-                .given()
-                .queryParams(params)
-                .get(ENDPOINT_HELLO)
-                .andReturn();
-        response.prettyPrint();
-    }
-
-    @Test
-    void testJsonPath() {
-        JsonPath response = RestAssured
-                .given()
-                .queryParam("name", "John Snow")
-                .get(ENDPOINT_HELLO)
-                .jsonPath();
-        String key = "answer";
-        String value = response.get(key);
-        if (value == null) {
-            System.out.printf("The key %s is absent.", key);
-        } else {
-            System.out.println(value);
-        }
-    }
 
     @Test
     void getText() {
