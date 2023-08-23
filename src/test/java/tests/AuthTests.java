@@ -1,7 +1,10 @@
+package tests;
+
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import lib.BaseTestCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +16,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AuthTests {
+public class AuthTests extends BaseTestCase {
     private static final String ENDPOINT_LOGIN = "https://playground.learnqa.ru/api/user/login";
     private static final String ENDPOINT_AUTH = "https://playground.learnqa.ru/api/user/auth";
 
@@ -37,9 +40,9 @@ public class AuthTests {
                 .when()
                 .post(ENDPOINT_LOGIN)
                 .andReturn();
-        this.cookie = loginEndpointResponse.getCookie("auth_sid");
-        this.header = loginEndpointResponse.getHeader("x-csrf-token");
-        this.loginUserId = loginEndpointResponse.jsonPath().getInt("user_id");
+        this.cookie = this.getCookie(loginEndpointResponse, "auth_sid");
+        this.header = this.getHeader(loginEndpointResponse, "x-csrf-token");
+        this.loginUserId = this.getIntFromJson(loginEndpointResponse, "user_id");
     }
 
 
