@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AuthTests extends BaseTestCase {
+public class UserAuthTests extends BaseTestCase {
     private static final String ENDPOINT_LOGIN = "https://playground.learnqa.ru/api/user/login";
     private static final String ENDPOINT_AUTH = "https://playground.learnqa.ru/api/user/auth";
 
