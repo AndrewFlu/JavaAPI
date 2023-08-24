@@ -25,6 +25,7 @@ public class APITests {
     private static final String ENDPOINT_LONG_REDIRECT = "https://playground.learnqa.ru/api/long_redirect";
     private static final String ENDPOINT_LONGTIME_JOB = "https://playground.learnqa.ru/api/longtime_job";
     private static final String ENDPOINT_GET_SECRET_PASSWORD = "https://playground.learnqa.ru/ajax/api/get_secret_password_homework";
+    private static final String ENDPOINT_HOMEWORK_COOKIE = "https://playground.learnqa.ru/api/homework_cookie";
 
     @Test
     void getText() {
@@ -311,5 +312,16 @@ public class APITests {
             System.out.println("Учётные данные найдены!");
             System.out.printf("Логин: %s\nПароль: %s", login, password);
         }
+    }
+
+    @Test
+    void getCookie() {
+        String expectedCookieName = "HomeWork";
+        Response response = RestAssured.get(ENDPOINT_HOMEWORK_COOKIE).andReturn();
+        Map<String, String> cookies = response.getCookies();
+
+        assertFalse(cookies.isEmpty());
+        assertTrue(cookies.containsKey(expectedCookieName), String.format("Cookies doesn't contain '%s' cookie", expectedCookieName));
+        assertEquals("hw_value", cookies.get(expectedCookieName), "Unexpected cookie's value");
     }
 }
