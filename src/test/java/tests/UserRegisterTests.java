@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import lib.Assertions;
 import lib.BaseTestCase;
+import lib.DataGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -33,5 +34,26 @@ public class UserRegisterTests extends BaseTestCase {
 
         Assertions.assertResponseCodeEquals(response, 400);
         Assertions.assertResponseTextEquals(response, String.format("Users with email '%s' already exists", email));
+    }
+
+    @Test
+    void registerUSerSuccessfully() {
+        String email = DataGenerator.getRandomEmail();
+        Map<String, String> userData = new HashMap<>();
+        userData.put("email", email);
+        userData.put("password", "123456");
+        userData.put("username", "learnQA_username");
+        userData.put("firstName", "learnQA_firstname");
+        userData.put("lastName", "learnQA_lastname");
+
+        Response response = RestAssured
+                .given()
+                .body(userData)
+                .when()
+                .post(ENDPOINT_CREATE_USER)
+                .andReturn();
+
+        Assertions.assertResponseCodeEquals(response, 200);
+        Assertions.assertJsonHasKey(response, "id");
     }
 }
