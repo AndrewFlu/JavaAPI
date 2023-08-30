@@ -8,11 +8,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Assertions {
-    public static void assertJsonByName(Response response, String name, int expectedValue) {
-        response.then().assertThat().body("$", hasKey(name));
-        int value = response.jsonPath().getInt(name);
+    public static void assertJsonByName(Response response, String key, int expectedValue) {
+        response.then().assertThat().body("$", hasKey(key));
+        int value = response.jsonPath().getInt(key);
 
         assertEquals(expectedValue, value, "JSON value is not equal to expected value");
+    }
+
+    public static void assertJsonByName(Response response, String key, String expectedValue) {
+        response.then().assertThat().body("$", hasKey(key));
+        String actualValue = response.jsonPath().getString(key);
+
+        assertEquals(expectedValue, actualValue, "JSON value is not equal to expected value");
     }
 
     public static void assertStringLengthGraterThenSupplyLimit(String checkString, int minLength) {
