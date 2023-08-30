@@ -19,4 +19,12 @@ public class Assertions {
         assertTrue(actualLength > minLength, String
                 .format("Symbol count of string: '%s' less then allowed min limit: %s", checkString, minLength));
     }
+
+    public static void assertResponseCodeEquals(Response response, int expectedStatusCode) {
+        assertEquals(expectedStatusCode, response.getStatusCode(), "Response status code is not as expected");
+    }
+
+    public static void assertResponseTextEquals(Response response, String expectedResponseText) {
+        assertEquals(expectedResponseText, response.asString(), "Response text is not as expected");
+    }
 }
