@@ -3,6 +3,7 @@ package lib;
 import io.restassured.response.Response;
 
 import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,7 +29,17 @@ public class Assertions {
         assertEquals(expectedResponseText, response.asString(), "Response text is not as expected");
     }
 
-    public static void assertJsonHasKey(Response response, String expectedKey) {
+    public static void assertJsonContainFields(Response response, String[] expectedFields) {
+        for (String expectedField : expectedFields) {
+            assertJsonContainsField(response, expectedField);
+        }
+    }
+
+    public static void assertJsonContainsField(Response response, String expectedKey) {
         response.then().assertThat().body("$", hasKey(expectedKey));
+    }
+
+    public static void assertJsonDoesNotContainField(Response response, String unexpectedKey) {
+        response.then().assertThat().body("$", not(hasKey(unexpectedKey)));
     }
 }

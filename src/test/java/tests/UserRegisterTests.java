@@ -54,6 +54,6 @@ public class UserRegisterTests extends BaseTestCase {
                 .andReturn();
 
         Assertions.assertResponseCodeEquals(response, 200);
-        Assertions.assertJsonHasKey(response, "id");
+        Assertions.assertJsonContainsField(response, "id");
     }
 }
