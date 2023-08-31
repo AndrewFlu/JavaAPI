@@ -39,10 +39,10 @@ public class CoreRequests {
     }
 
     @Step("Make a POST-Request")
-    public Response makePostRequest(String url, Map<String, String> authData) {
+    public Response makePostRequest(String url, Map<String, String> bodyData) {
         return given()
                 .filter(new AllureRestAssured())
-                .body(authData)
+                .body(bodyData)
                 .post(url)
                 .andReturn();
     }
