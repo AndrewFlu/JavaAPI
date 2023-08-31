@@ -69,7 +69,7 @@ public class UserEditTests extends BaseTestCase {
     }
 
     @Test
-    @Description("Cannot edit another user")
+    @Description("User cannot edit another user")
     void cannotEditUserWithAuthenticationByAnotherUser() {
         // generate user_1
         Map<String, String> user_1_registrationData = DataGenerator.getRegistrationData();

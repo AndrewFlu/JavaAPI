@@ -8,7 +8,7 @@ import java.util.Map;
 public class DataGenerator {
     public static String getRandomEmail() {
         long timeStamp = System.currentTimeMillis();
-        return String.format("learnqa%d@example.com", timeStamp);
+        return String.format("learnqa%d%s@example.com", timeStamp, StringGenerator.generateRandomString(5));
     }
 
     public static Map<String, String> getRegistrationData() {
