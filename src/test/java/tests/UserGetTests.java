@@ -1,9 +1,9 @@
 package tests;
 
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import lib.Assertions;
 import lib.BaseTestCase;
+import lib.CoreRequests;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -14,10 +14,12 @@ public class UserGetTests extends BaseTestCase {
     private static final String ENDPOINT_GET_USER = "https://playground.learnqa.ru/api/user/";
     private static final String ENDPOINT_USER_LOGIN = "https://playground.learnqa.ru/api/user/login";
 
+    CoreRequests coreRequests = new CoreRequests();
+
     @Test
     void getUserInfoWithoutAuthorization() {
         String userId = "2";
-        Response response = RestAssured.get(ENDPOINT_GET_USER.concat(userId)).andReturn();
+        Response response = coreRequests.makeGetRequest(ENDPOINT_GET_USER.concat(userId));
 
         Assertions.assertJsonContainsField(response, "username");
         Assertions.assertJsonDoesNotContainField(response, "firstName");
@@ -30,23 +32,13 @@ public class UserGetTests extends BaseTestCase {
         Map<String, String> authData = new HashMap<>();
         authData.put("email", "vinkotov@example.com");
         authData.put("password", "1234");
-        Response authResponse = RestAssured
-                .given()
-                .body(authData)
-                .when()
-                .post(ENDPOINT_USER_LOGIN)
-                .andReturn();
-        String header = authResponse.getHeader("x-csrf-token");
+        Response authResponse = coreRequests.makePostRequest(ENDPOINT_USER_LOGIN, authData);
+
+        String token = authResponse.getHeader("x-csrf-token");
         String cookie = authResponse.getCookie("auth_sid");
 
         String userId = "2";
-        Response userInfoResponse = RestAssured
-                .given()
-                .header("x-csrf-token", header)
-                .cookie("auth_sid", cookie)
-                .when()
-                .get(ENDPOINT_GET_USER.concat(userId))
-                .andReturn();
+        Response userInfoResponse = coreRequests.makeGetRequest(ENDPOINT_GET_USER.concat(userId), token, cookie);
 
         String[] expectedFields = {"username", "firstName", "lastName", "email"};
         Assertions.assertJsonContainFields(userInfoResponse, expectedFields);

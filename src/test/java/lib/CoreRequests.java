@@ -46,4 +46,9 @@ public class CoreRequests {
                 .post(url)
                 .andReturn();
     }
+
+    @Step("Make a simple GET-request")
+    public Response makeGetRequest(String url) {
+        return makeGetRequest(url, null, null);
+    }
 }
