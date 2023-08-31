@@ -51,4 +51,15 @@ public class CoreRequests {
     public Response makeGetRequest(String url) {
         return makeGetRequest(url, null, null);
     }
+
+    @Step("Make a simple PUT-request")
+    public Response makePutRequest(String url, String token, String authCookie, Map<String, String> userData) {
+        return given()
+                .filter(new AllureRestAssured())
+                .header(new Header("x-csrf-token", token))
+                .cookie("auth_sid", authCookie)
+                .body(userData)
+                .put(url)
+                .andReturn();
+    }
 }
