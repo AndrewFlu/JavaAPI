@@ -1,6 +1,7 @@
 package tests;
 
 import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
 import io.restassured.response.Response;
 import lib.Assertions;
 import lib.BaseTestCase;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+@Epic("Get user data tests")
 public class UserGetTests extends BaseTestCase {
 
     private static final String ENDPOINT_GET_USER = "https://playground.learnqa.ru/api/user/";

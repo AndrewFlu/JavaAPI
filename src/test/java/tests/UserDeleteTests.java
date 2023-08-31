@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-@Epic("Delete users")
+@Epic("Delete user tests")
 public class UserDeleteTests extends BaseTestCase {
     private static final String ENDPOINT_LOGIN = "https://playground.learnqa.ru/api/user/login";
     private static final String ENDPOINT_USER = "https://playground.learnqa.ru/api/user/";

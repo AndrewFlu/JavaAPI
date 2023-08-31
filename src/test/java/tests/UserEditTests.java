@@ -1,6 +1,7 @@
 package tests;
 
 import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
 import io.restassured.response.Response;
 import lib.Assertions;
 import lib.BaseTestCase;
@@ -12,6 +13,7 @@ import utils.StringGenerator;
 import java.util.HashMap;
 import java.util.Map;
 
+@Epic("Edit user data tests")
 public class UserEditTests extends BaseTestCase {
     private static final String ENDPOINT_USER = "https://playground.learnqa.ru/api/user/";
     private static final String ENDPOINT_LOGIN = "https://playground.learnqa.ru/api/user/login";

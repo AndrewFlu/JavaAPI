@@ -1,5 +1,7 @@
 package tests;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
 import io.restassured.response.Response;
 import lib.Assertions;
 import lib.BaseTestCase;
@@ -13,12 +15,14 @@ import utils.StringGenerator;
 import java.util.HashMap;
 import java.util.Map;
 
+@Epic("Registration tests")
 public class UserRegisterTests extends BaseTestCase {
 
     private static final String ENDPOINT_CREATE_USER = "https://playground.learnqa.ru/api/user/";
     private final CoreRequests coreRequests = new CoreRequests();
 
     @Test
+    @Description("User cannot register with existing email")
     void cannotRegisterWithExistingEmail() {
         String email = "vinkotov@example.com";
         String password = "123";
@@ -34,7 +38,8 @@ public class UserRegisterTests extends BaseTestCase {
     }
 
     @Test
-    void registerUSerSuccessfully() {
+    @Description("User can be successfully registered")
+    void registerUserSuccessfully() {
         Map<String, String> userData = DataGenerator.getRegistrationData();
 
         Response response = coreRequests.makePostRequest(ENDPOINT_CREATE_USER, userData);
@@ -44,6 +49,7 @@ public class UserRegisterTests extends BaseTestCase {
     }
 
     @Test
+    @Description("User cannot register with invalid email")
     void cannotRegisterWithInvalidEmail() {
         Map<String, String> invalidData = new HashMap<>();
         invalidData.put("email", "learnqaexample.com");
@@ -55,6 +61,7 @@ public class UserRegisterTests extends BaseTestCase {
     }
 
     @Test
+    @Description ("User cannot register with short name")
     void cannotRegisterUserWithShortFirstName() {
         Map<String, String> invalidData = new HashMap<>();
         invalidData.put("firstName", "a");
@@ -66,6 +73,7 @@ public class UserRegisterTests extends BaseTestCase {
     }
 
     @Test
+    @Description("User cannot register with too long firstName")
     void cannotRegisterUserWithTooLongFirstName() {
         Map<String, String> invalidData = new HashMap<>();
         String tooLongFirstName = StringGenerator.generateRandomString(251);
@@ -79,6 +87,7 @@ public class UserRegisterTests extends BaseTestCase {
 
     @ParameterizedTest
     @ValueSource(strings = {"email", "password", "username", "firstName", "lastName"})
+    @Description("User cannot registered without mandatory field")
     void cannotRegisterWithoutOneMandatoryField(String field) {
         Map<String, String> registrationData = DataGenerator.getRegistrationData();
         registrationData.remove(field);
